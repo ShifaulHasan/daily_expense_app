@@ -31,8 +31,8 @@ while ($row = mysqli_fetch_assoc($result)) {
     <td>{$row['category']}</td>
     <td>{$row['note']}</td>
     <td>
-      <a class='btn' href='edit_expense.php?id={$row['id']}'>Edit</a>
-      <a class='btn' href='delete_expense.php?id={$row['id']}'>Delete</a>
+      <a class='btn' href='edit_expense.php?id={$row['id']}'>Edit</a> <br>
+      <a class='btn' href='delete_expense.php?id={$row['id']}'>Delete</a> <br>
     </td>
     </tr>";
     $total += $row['amount'];
