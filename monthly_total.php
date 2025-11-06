@@ -1,23 +1,28 @@
 <?php
-include 'db.php';
+include 'db_connect.php';
 
 if (isset($_POST['month'])) {
     $month = $_POST['month'];
     $year = $_POST['year'];
 
+    
     $query = "SELECT SUM(amount) AS total_expense 
               FROM expenses 
-              WHERE MONTH(date) = '$month' AND YEAR(date) = '$year'";
+              WHERE MONTH(expense_date) = '$month' 
+              AND YEAR(expense_date) = '$year'";
     $result = mysqli_query($conn, $query);
     $row = mysqli_fetch_assoc($result);
     $total = $row['total_expense'] ?? 0;
+
 } else {
+    
     $month = date('m');
     $year = date('Y');
+
     $query = "SELECT SUM(amount) AS total_expense 
               FROM expenses 
-              WHERE MONTH(date) = MONTH(CURRENT_DATE()) 
-              AND YEAR(date) = YEAR(CURRENT_DATE())";
+              WHERE MONTH(expense_date) = MONTH(CURRENT_DATE()) 
+              AND YEAR(expense_date) = YEAR(CURRENT_DATE())";
     $result = mysqli_query($conn, $query);
     $row = mysqli_fetch_assoc($result);
     $total = $row['total_expense'] ?? 0;
@@ -28,7 +33,7 @@ if (isset($_POST['month'])) {
 <html lang="bn">
 <head>
   <meta charset="UTF-8">
-  <title>Monthly espense</title>
+  <title>Monthly Expense</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -38,35 +43,29 @@ if (isset($_POST['month'])) {
     <form method="POST">
       <label>Select a Month:</label>
       <select name="month" required>
-        <option value="1">January</option>
-    <option value="2">February</option>
-        <option value="3">march</option>
-        <option value="4">April</option>
-        <option value="5">May</option>
-        <option value="6">June</option>
-        <option value="7">july</option>
-        <option value="8">August</option>
-        <option value="9">September</option>
-        <option value="10">October</option>
-        <option value="11">November</option>
-        <option value="12">December</option>
-      </select>
-
-      <label>Select a year:</label>
-      <select name="year" required>
         <?php
-        for ($i = 2020; $i <= date('Y'); $i++) {
-            echo "<option value='$i'>$i</option>";
+        for ($m=1; $m<=12; $m++) {
+            $selected = ($m == $month) ? "selected" : "";
+            echo "<option value='$m' $selected>".date("F", mktime(0,0,0,$m,1))."</option>";
         }
         ?>
       </select>
 
-      <button type="submit">show</button>
+      <label>Select a Year:</label>
+      <select name="year" required>
+        <?php
+        for ($i = 2020; $i <= date('Y'); $i++) {
+            $selected = ($i == $year) ? "selected" : "";
+            echo "<option value='$i' $selected>$i</option>";
+        }
+        ?>
+      </select>
+
+      <button type="submit">Show</button>
     </form>
 
     <div class="result">
-      <h2><?php echo $year; ?> year
-      <?php echo date("F", mktime(0, 0, 0, $month, 1)); ?>monthly total cost:</h2>
+      <h2><?php echo $year; ?> year, <?php echo date("F", mktime(0, 0, 0, $month, 1)); ?> monthly total cost:</h2>
       <p><strong><?php echo $total; ?> Tk</strong></p>
     </div>
 
